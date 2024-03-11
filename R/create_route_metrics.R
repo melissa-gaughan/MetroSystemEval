@@ -8,7 +8,10 @@
 #' @return A dataframe of route-level service metrics by period and day.
 #' @export
 #'
-#' @examples NA
+#' @examples
+#' create_route_metrics(gtfs_type = "current", gtfs_path = fs::path_package("extdata", "233_gtfs.zip", package = "MetroSystemEval"),
+#' service_change_start_date = "2023-09-02")
+
 create_route_metrics <- function(gtfs_type, gtfs_path, service_change_start_date){
   #Read selected GTFS file
   if(gtfs_type == "current"){

@@ -10,9 +10,13 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Imports: 
     dplyr,
+    fs,
     hms,
     lubridate,
     magrittr,
     rlang,
     stringr,
     tidytransit
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
