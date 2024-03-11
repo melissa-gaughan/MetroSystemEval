@@ -1,12 +1,18 @@
 Package: MetroSystemEval
-Title: What the Package Does (One Line, Title Case)
+Title: King County Metro System Evaluation Functions
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person("Melissa", "Gaughan", , "mgaughan@kingcounty.gov", role = c("aut", "cre"))
+Description: This package contains functions for use in King County Metro's Annual System Evaluation. 
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+Imports: 
+    dplyr,
+    hms,
+    lubridate,
+    magrittr,
+    rlang,
+    stringr,
+    tidytransit
