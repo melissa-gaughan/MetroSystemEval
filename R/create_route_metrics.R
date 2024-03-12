@@ -51,7 +51,8 @@ create_route_metrics <- function(gtfs_type, gtfs_path, service_change_start_date
       # Define daytype of service ID to filter in next steps
       dplyr::mutate(daytype = base::ifelse(.data$saturday == 1, 'sat',
                                            base::ifelse(.data$sunday == 1, 'sun', 'wkd')))
-    if(nrow(service_days == 0)){
+    if(nrow(service_days) == 0){
+      print(max(service_days$end_date))
       print("Make sure the selected service change start date is within scope for your GTFS and check the formatting on the input.")
       stop()
     }else{
@@ -97,9 +98,45 @@ create_route_metrics <- function(gtfs_type, gtfs_path, service_change_start_date
 
     stop_times <- stop_times_2
 
+  }else if ( "hms" %in% class(kcm$stop_times$arrival_time)) {
+    print("HMS time format")
+    stop_times <- kcm$stop_times %>%
+      # Filter stop-trips of the relevant routes and only weekday
+      dplyr::filter(.data$trip_id %in% trips$trip_id) %>%
+      dplyr::select(.data$trip_id, .data$arrival_time, .data$departure_time, .data$stop_id, .data$stop_sequence) %>%
+      dplyr::mutate(start_time_str =as.character(.data$arrival_time))
+
+
+
+    stop_times[c("hour", "min", "sec")] <- stringr::str_split_fixed(stop_times$arrival_time, ":", 3)
+
+    stop_times_2 <- stop_times %>%
+      dplyr::mutate( hour_sec = base::as.numeric(.data$hour) *3600,
+                     min_sec = base::as.numeric(.data$min) * 60) %>%
+      dplyr::mutate(start_time_sec = .data$hour_sec+.data$min_sec+base::as.numeric(.data$sec)) %>%
+      # Sort the dataframe
+      dplyr::arrange(.data$trip_id, .data$start_time_sec, .data$stop_sequence) %>%
+      # Group by unique trip (Recall this dataframe is already sorted by time)
+      dplyr::group_by(.data$trip_id) %>%
+      # Create two new columns for each trip (group)
+      # One with the start time (string type) of every trip
+      # The other with the end time (string type) of every trip
+      dplyr::mutate(start_time_str = base::as.numeric(min(.data$start_time_sec)),
+                    end_time_str = base::as.numeric(max(.data$start_time_sec))) %>%
+      dplyr::mutate(start_time_hr = base::trunc(.data$start_time_str/3600, 0),
+                    start_time_min = ((.data$start_time_str - (.data$start_time_hr*3600))/60),
+                    start_time_seconds = .data$start_time_str - ((.data$start_time_hr*3600) + (.data$start_time_min*60) )) %>%
+      dplyr::mutate(end_time_hr = base::trunc(.data$end_time_str/3600, 0),
+                    end_time_min = ((.data$end_time_str - (.data$end_time_hr*3600))/60),
+                    end_time_seconds = .data$end_time_str - ((.data$end_time_hr*3600) + (.data$end_time_min*60) ))
+
+
+    stop_times <- stop_times_2
+
+
 
   }else{
-    base::print(base::paste0("check data structure of stop_times$arrival_times for ", gtfs_type, " at ", gtfs_path))
+    base::print(base::paste0("check data structure of stop_times$arrival_time for ", gtfs_type, " at ", gtfs_path,". Current class is: ", class(kcm$stop_times$arrival_time)))
     stop()
   }
   # This snippet process the time fields from character type into more manageable type and values
