@@ -51,6 +51,12 @@ create_route_metrics <- function(gtfs_type, gtfs_path, service_change_start_date
       # Define daytype of service ID to filter in next steps
       dplyr::mutate(daytype = base::ifelse(.data$saturday == 1, 'sat',
                                            base::ifelse(.data$sunday == 1, 'sun', 'wkd')))
+    if(nrow(service_days == 0)){
+      print("Make sure the selected service change start date is within scope for your GTFS and check the formatting on the input.")
+      stop()
+    }else{
+      print( "computing service days")
+    }
 
   # Filter only trips in the routes in the corridors selected
   trips <- kcm$trips %>%
