@@ -19,7 +19,7 @@ You can install the development version of MetroSystemEval from
 devtools::install_github("melissa-gaughan/MetroSystemEval")
 ```
 
-## Example
+## Route Metric Example
 
 You can call the create_route_metrics() function on any GTFS that you
 have on your computer. You need to supply a file path (make sure to
@@ -32,4 +32,20 @@ library(MetroSystemEval)
 example_route_metric_table <- create_route_metrics(gtfs_type = "current", gtfs_path = fs::path_package("extdata", "233_gtfs.zip", package = "MetroSystemEval"),
                                   service_change_start_date ="2023-09-02")
 View(example_route_metric_table)
+```
+
+## Route Distance Example
+
+Use the create_route_distance_metrics() function to create a table of
+route length in miles for both the current service network and the
+future transit network. The output is a table with route numbers and the
+corresponding distance in miles.
+
+``` r
+library(MetroSystemEval)
+
+example_distance_table <- reate_route_distance_metrics(
+  gtfs_path_future = fs::path_package("extdata",  "2030_gtfs_highgrowth.zip", package= "MetroSystemEval"), 
+  gtfs_path_current = fs::path_package("extdata", "233_gtfs.zip", package = "MetroSystemEval"),
+  coordinate_reference = 2926)
 ```

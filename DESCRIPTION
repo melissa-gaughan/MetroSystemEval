@@ -15,6 +15,7 @@ Imports:
     lubridate,
     magrittr,
     rlang,
+    sf,
     stringr,
     tidytransit
 Suggests: 

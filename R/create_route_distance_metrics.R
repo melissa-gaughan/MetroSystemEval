@@ -7,8 +7,14 @@
 #' @return A table of route distances for future and current transit service
 #' @export
 #'
-#' @examples
-create_route_distance_metrics <- function( gtfs_path_current, gtfs_path_future, coordinate_refence= 2926){
+#' @examples  example_distance_table <- create_route_distance_metrics(
+#' gtfs_path_future = fs::path_package(
+#' "extdata",  "2030_gtfs_highgrowth.zip", package= "MetroSystemEval"),
+#' gtfs_path_current = fs::path_package(
+#' "extdata", "233_gtfs.zip", package = "MetroSystemEval"),
+#' coordinate_reference = 2926)
+
+create_route_distance_metrics <- function( gtfs_path_current, gtfs_path_future, coordinate_reference= 2926){
 
   gtfs_current <- tidytransit::read_gtfs(gtfs_path_current) %>%
     tidytransit::gtfs_as_sf()
@@ -16,13 +22,13 @@ create_route_distance_metrics <- function( gtfs_path_current, gtfs_path_future, 
 
   current_distance <- gtfs_current$trips %>%
     dplyr::distinct(.data$route_id, .data$shape_id) %>%
-    dplyr::left_join(., gtfs_current$shapes) %>%
+    dplyr::left_join( gtfs_current$shapes) %>%
     sf::st_as_sf() %>%
     sf::st_transform(crs = coordinate_reference) %>%
     dplyr::mutate(distance_miles = as.numeric(sf::st_length(.data$geometry))*0.000189394) %>%
     sf::st_drop_geometry() %>%
-    dplyr::left_join(., gtfs_current$routes %>%
-                select(.data$route_id, .data$route_short_name)) %>%
+    dplyr::left_join( gtfs_current$routes %>%
+                dplyr::select(.data$route_id, .data$route_short_name)) %>%
     dplyr::group_by(.data$route_short_name) %>%
     dplyr::summarise(distance_miles = max(.data$distance_miles))
 
@@ -32,16 +38,16 @@ create_route_distance_metrics <- function( gtfs_path_current, gtfs_path_future, 
 
   future_distance <- gtfs_future$trips %>%
     dplyr::distinct(.data$route_id, .data$shape_id) %>%
-    dplyr::left_join(., gtfs_future$shapes) %>%
+    dplyr::left_join( gtfs_future$shapes) %>%
     sf::st_as_sf() %>%
     sf::st_transform(crs = coordinate_reference) %>%
     dplyr::mutate(distance_miles = as.numeric(sf::st_length(.data$geometry))*0.000189394) %>%
     sf::st_drop_geometry() %>%
-    dplyr::left_join(., gtfs_future$routes %>%
-                       select(.data$route_id, .data$route_short_name)) %>%
+    dplyr::left_join( gtfs_future$routes %>%
+                       dplyr::select(.data$route_id, .data$route_short_name)) %>%
     dplyr::group_by(.data$route_short_name) %>%
     dplyr::summarise(distance_miles = max(.data$distance_miles))
 
-  route_distances_out <- bind_rows(current_distance, future_distance)
+  route_distances_out <- dplyr::bind_rows(current_distance, future_distance)
 
  }

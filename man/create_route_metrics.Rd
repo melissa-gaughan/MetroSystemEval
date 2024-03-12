@@ -20,6 +20,8 @@ A dataframe of route-level service metrics by period and day.
 Generate system evaluation performance metrics
 }
 \examples{
-create_route_metrics(gtfs_type = "current", gtfs_path = fs::path_package("extdata", "233_gtfs.zip", package = "MetroSystemEval"),
+create_route_metrics(gtfs_type = "current",
+gtfs_path = fs::path_package(
+"extdata", "233_gtfs.zip", package = "MetroSystemEval"),
 service_change_start_date = "2023-09-02")
 }

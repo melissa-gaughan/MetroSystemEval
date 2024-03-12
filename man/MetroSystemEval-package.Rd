@@ -8,6 +8,14 @@
 \description{
 This package contains functions for use in King County Metro's Annual System Evaluation.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/melissa-gaughan/MetroSystemEval}
+  \item Report bugs at \url{https://github.com/melissa-gaughan/MetroSystemEval/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Melissa Gaughan \email{mgaughan@kingcounty.gov}
 

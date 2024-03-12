@@ -9,7 +9,9 @@
 #' @export
 #'
 #' @examples
-#' create_route_metrics(gtfs_type = "current", gtfs_path = fs::path_package("extdata", "233_gtfs.zip", package = "MetroSystemEval"),
+#' create_route_metrics(gtfs_type = "current",
+#' gtfs_path = fs::path_package(
+#' "extdata", "233_gtfs.zip", package = "MetroSystemEval"),
 #' service_change_start_date = "2023-09-02")
 
 create_route_metrics <- function(gtfs_type, gtfs_path, service_change_start_date){
