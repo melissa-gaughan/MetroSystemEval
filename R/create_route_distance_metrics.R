@@ -44,7 +44,12 @@ create_route_distance_metrics <- function( gtfs_path_current, gtfs_path_future, 
     dplyr::mutate(distance_miles = as.numeric(sf::st_length(.data$geometry))*0.000189394) %>%
     sf::st_drop_geometry() %>%
     dplyr::left_join( gtfs_future$routes %>%
-                       dplyr::select(.data$route_id, .data$route_short_name)) %>%
+                       dplyr::select(.data$route_id,  .data$route_long_name, .data$route_short_name)) %>%
+    dplyr::mutate(route_short_name =
+                    base::ifelse(base::is.na(.data$route_short_name),
+                                 .data$route_long_name,
+                                 base::paste0(.data$route_short_name,
+                                   " ", .data$route_long_name))) %>%
     dplyr::group_by(.data$route_short_name) %>%
     dplyr::summarise(distance_miles = max(.data$distance_miles))
 
