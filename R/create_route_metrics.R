@@ -252,7 +252,8 @@ kcm$routes <- kcm$routes %>%
     dplyr::group_by(.data$route_short_name,  .data$daytype, .data$period, .data$route_type) %>%
     dplyr::summarise_all(sum) %>%
     dplyr::mutate(srv_hr_trip = .data$serv_hours/.data$num_trips,
-                  avg_headway_mins =.data$ mins_period/.data$num_trips) %>%
+                  avg_headway_mins =.data$ mins_period/.data$num_trips,
+                  route_short_name = stringr::str_squish(route_short_name)) %>%
     dplyr::mutate(network_type = gtfs_type)
 
 }
