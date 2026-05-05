@@ -54,4 +54,5 @@ create_route_distance_metrics <- function( gtfs_path_current, gtfs_path_future, 
     dplyr::mutate(route_short_name = stringr::str_remove_all(route_short_name, "NA")) %>%
     dplyr::mutate(route_short_name = stringr::str_squish(route_short_name) )
 
+
  }
