@@ -50,6 +50,7 @@ create_route_distance_metrics <- function( gtfs_path_current, gtfs_path_future, 
     dplyr::group_by(.data$route_short_name) %>%
     dplyr::summarise(distance_miles = max(.data$distance_miles))
 
-  route_distances_out <- dplyr::bind_rows(current_distance, future_distance)
+  route_distances_out <- dplyr::bind_rows(current_distance, future_distance) %>%
+    mutate(route_short_name = stringr::str_remove_all(route_short_name, " NA"))
 
  }
