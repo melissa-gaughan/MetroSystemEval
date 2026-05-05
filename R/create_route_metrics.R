@@ -28,11 +28,18 @@ create_route_metrics <- function(gtfs_type, gtfs_path, service_change_start_date
     # If GTFS file is updated, make sure it is saved in the 1_inputs folder
     # and that the name is changed in the path below
     kcm <- tidytransit::read_gtfs(gtfs_path)
-    kcm$routes <- kcm$routes %>%
-      dplyr::mutate(route_short_name = base::ifelse(base::is.na(.data$route_short_name), .data$route_long_name,
-                                       base::paste0(.data$route_short_name,
-                                              ' ',
-                                              .data$route_long_name)))
+kcm$routes <- kcm$routes %>%
+    #dplyr::mutate( route_short_name = stringr::str_replace_all(route_short_name, pattern = " ", replacement = "")) %>%
+    dplyr::mutate(route_short_name = paste(route_short_name, route_long_name, sep = " ")) #%>%
+    #dplyr::mutate( route_short_name = stringr::str_replace_all(route_short_name, pattern = "NA", replacement = ""))
+
+   kcm$stops <- kcm$stops %>%  #remove duplicate stop ids
+      dplyr::group_by(stop_id) %>%
+     dplyr::slice_head(n=1)
+
+   kcm <- tidytransit::as_tidygtfs(kcm)
+
+
   } else {
     base::print("Error on selected network. Review selection in 'gtfs_type' object")
   }
@@ -147,7 +154,7 @@ create_route_metrics <- function(gtfs_type, gtfs_path, service_change_start_date
     dplyr::left_join(service_days %>%  dplyr::select(c(.data$service_id, .data$daytype))) %>%
     dplyr::select(-.data$service_id, -.data$trip_id) %>%
     # Remove potential duplicates to avoid errors in the calculations
-    dplyr::distinct( .data$route_id, .data$direction_id, .data$start_time_str, .keep_all = TRUE) %>%
+    dplyr::distinct( .data$route_id, .data$direction_id, .data$start_time_str, .data$daytype, .keep_all = TRUE) %>%
     # Extract only the hour integer from the character time and set it as numeric
 
     # Convert midnight and past-midnight hours to equivalent hours
